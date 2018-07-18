@@ -1,0 +1,14 @@
+<div class="weatherWidget">
+    {{#each partials.weatherContext.locations}}
+    <div class="location">
+        <h3>{{name}}</h3>
+        <a href="{{forecastUrl}}">
+            <img src="{{iconUrl}}" alt="{{weather}}"
+            {{weather}}, {{temp}}
+        </a>
+    </div>
+    {{/each}}
+    <small> Source: 
+        <a href="https://www.wunderground.com/weather/ua/kiev/IKIEV67?cm_ven=localwx_today">Kyiv weather</a> 
+    </small>
+</div>

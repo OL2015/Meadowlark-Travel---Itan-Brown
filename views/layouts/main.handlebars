@@ -2,13 +2,16 @@
 <html lang="en">
     <head>
         <title>Meadowlark Travel</title>
+        <script src="//code.jquery.com/jquery-2.0.2.min.js"></script>
+        {{{_sections.head}}}
         {{#if showTests}}
             <link rel="stylesheet" href="/vendor/mocha.css" />
         {{/if}}
-        <script src="//code.jquery.com/jquery-2.0.2.min.js"></script>
+        
     </head>
     <body>         
         {{{body}}}
+        {{{_sections.jquery}}}
           <footer>
             <img src='/img/no-logo.jpg' alt='We are here!!!' />
         </footer>
