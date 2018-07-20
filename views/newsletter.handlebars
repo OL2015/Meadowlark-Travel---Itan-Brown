@@ -1,6 +1,6 @@
 <h2>Subscribe our mailing list</h2>
-
-<form class="form-horizontal" role="form"
+<div class="formContainer"> 
+<form class="form-horizontal newsletterForm" role="form"
     action="/process?form=newsletter" method="POST" >
     <input type="hidden" name="_csrf" value="{{csrf}}">
     <div class="form-group" >
@@ -23,3 +23,31 @@
         </div>
     </div>
 </form>
+</div>
+{{#section 'jquery' }}
+    <script>
+        $(document).ready(function() {
+            $('.newsletterForm').on('submit', function(evt){
+                evt.preventDefault();
+                var action = $(this).attr('action');
+                var $container = $(this).closest('.formContainer');
+                $.ajax({
+                    url : action,
+                    type : 'POST',
+                    data : $(this).serialize(),
+                    success: function(data){
+                        if (data.success){
+                            $container.html('<h2> Thank you </h2>');
+                        }
+                        else {
+                            $container.html('<h2> Problem with returned data!!!</h2>');
+                        }
+                    },
+                    error: function(){
+                        $container.html('<h2> Problem: error returned!!!</h2>');
+                    }
+                });
+            });
+        });
+    </script>
+{{/section}}

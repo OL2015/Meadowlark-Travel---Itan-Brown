@@ -139,8 +139,14 @@ app.post('/process', function(req, res){
     console.log('CSRF token (from hidden form field):' + req.body._csrf);
     console.log('Name (from visible form field):' + req.body.name);
     console.log('Email (from visible form field):' + req.body.email);
-    res.redirect(303, 'Thank you!');
-})
+    if (req.xhr || req.accepts('json,html')==='json') {
+        //process request here
+        res.send({success:true});
+    } 
+    else {
+        res.redirect(303, '/thank-you');
+    }  
+});
 
 
 //page 404
