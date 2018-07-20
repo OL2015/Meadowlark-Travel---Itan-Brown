@@ -1,6 +1,7 @@
 var express = require("express");
 var fortune = require('./lib/fortune.js');
 var weather = require('./lib/weather.js');
+var formidable=require("formidable");
 var app = express();
 
 // set up handlebars view engine
@@ -35,9 +36,30 @@ app.use (function (req, res, next){
     next();
 });
 
+app.get('/contest/vacation-photo', function(req, res){
+    var now=new Date();
+    res.render('contest/vacation-photo', {
+        year:now.getFullYear(), month: now.getMonth()
+    });
+});
+app.post('/contest/vacation-photo/:year/:month', function (req, res){
+    var form = new formidable.IncomingForm();
+    form.parse(req, function(err,fields, files){
+        if (err) 
+            return res.redirect(303, '/error');
+        console.log('received fields:');
+        console.log(fields);
+        console.log('received files;');
+        console.log(files);
+        res.redirect(303, '/thank-you');
+    });
+});
+
 app.get('/newsletter', function(req,res){
     res.render('newsletter',{csrf:'CSRF token goes here'});
 });
+
+
 
 app.get('/tours/hood-river', function(req, res){
     res.render('tours/hood-river');
