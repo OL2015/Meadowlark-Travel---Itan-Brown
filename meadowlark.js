@@ -22,6 +22,10 @@ app.engine('handlebars', handlebars.engine);
 app.set('port', process.env.PORT || 3000);
 app.use(express.static(__dirname + '/public'));
 
+app.use(require('body-parser').urlencoded({extended:true}));
+
+
+
 app.use (function (req, res, next){
     if (!res.locals.partials) 
         res.locals.partials={};
@@ -29,6 +33,10 @@ app.use (function (req, res, next){
     res.locals.showTests =  app.get('env') !== 'production' && 
         req.query.test==='1'; 
     next();
+});
+
+app.get('/newsletter', function(req,res){
+    res.render('newsletter',{csrf:'CSRF token goes here'});
 });
 
 app.get('/tours/hood-river', function(req, res){
@@ -126,6 +134,14 @@ app.post('/process-contact', function (req, res){
                         res.redirect (303, '/database-error'); 
     }
 });
+app.post('/process', function(req, res){
+    console.log('Form (from querystring):' + req.query.form);
+    console.log('CSRF token (from hidden form field):' + req.body._csrf);
+    console.log('Name (from visible form field):' + req.body.name);
+    console.log('Email (from visible form field):' + req.body.email);
+    res.redirect(303, 'Thank you!');
+})
+
 
 //page 404
 app.use( function (req, res)
