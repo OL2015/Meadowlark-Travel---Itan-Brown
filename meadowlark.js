@@ -1,3 +1,8 @@
+// https://html.spec.whatwg.org/multipage/forms.html#valid-e-mail-address
+var VALID_EMAIL_REGEX = new RegExp('^[a-zA-Z0-9.!#$%&\'*+\/=?^_`{|}~-]+@' +
+'[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?' +
+'(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$');
+
 var express = require("express");
 var fortune = require('./lib/fortune.js');
 var weather = require('./lib/weather.js');
@@ -25,9 +30,30 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(require('body-parser').urlencoded({extended:true}));
 
+app.use(require('cookie-parser') (credentials.cookieSecret));
+// usage:
+// res.cookie('monster', 'nom nom');
+// res.cookie('signed_monster', 'nom nom', {signed:true});
+// var monster = req.cookies.monster;
+// var signedMonster = req.signedCookies.signed_monster;
+// res.clearCookie('monster);
+app.use(require('express-session')({
+    resave:false,
+    saveUninitialized:false,
+    secret:credentials.cookieSecret,
+}));
+// usage:
+// req.session.userName='Anonymous';
+// var colorScheme = req.session.colorScheme || 'dark';
+// delete seance:
+// req.sessio.userName = null ; (not deleted, just null)
+// delete req.session.colorScheme; (delete colorScheme)
 
+ 
 
 app.use (function (req, res, next){
+    res.locals.flash=req.session.flash;
+    delete req.session.flash;
     if (!res.locals.partials) 
         res.locals.partials={};
         res.locals.partials.weatherContext = weather.getWeatherData();
@@ -58,6 +84,19 @@ app.post('/contest/vacation-photo/:year/:month', function (req, res){
 app.get('/newsletter', function(req,res){
     res.render('newsletter',{csrf:'CSRF token goes here'});
 });
+
+app.post ('/newsletter', function (req, res){
+    var name=req.body.name || '', email=req.body.email || '';
+    if (!email.match (VALID_EMAIL_REGEX)) {
+        if (req.xhr)
+            return res.json({error:'email is incorrect'});
+        req.session.flash={
+            type:'danger',
+            info: "varification error",
+            message: 'e-mail address is incorrect',
+        }
+    }
+})
 
 
 
